@@ -8,12 +8,23 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
-      ./module.nix
+      #./virtualbox-fix.nix
     ];
+
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  #boot.loader = {
+  #  efi.canTouchEfiVariables = true;
+  #  grub = {
+  #    enable = true;
+  #    devices = [ "nodev" ];
+  #    efiSupport = true;
+  #    useOSProber = true;
+  #  };
+  #};
+
 
   # Kernel Modules
   boot.extraModulePackages = [ config.boot.kernelPackages.msi-ec ];
@@ -56,10 +67,10 @@
   console.keyMap = "be-latin1";
 
   #Auto upgrade
-  system.autoUpgrade.enable = true;
+  #system.autoUpgrade.enable = true;
   # Warning "allowReboot = true" allow the upgrade to reboot the machine in order to upgrade the kernel,
   # if set to false it will stay in the current channel and only upgrade to last version in the current channel.
-  system.autoUpgrade.allowReboot = true;
+  #system.autoUpgrade.allowReboot = true;
 
 
   # Enable CUPS to print documents.
@@ -83,7 +94,7 @@
     settings = {
       General = {
         # Shows battery charge of connected devices on supported
-        # Bluetooth adapters. Defaults to 'false'.f
+        # Bluetooth adapters. Defaults to 'false'.
         Experimental = true;
         # When enabled other devices can connect faster to us, however
         # the tradeoff is increased power consumption. Defaults to
@@ -134,8 +145,6 @@
     packages = with pkgs; [
     #GAMING
       eden
-      xrizer
-      prismlauncher
       olympus
     #CREATION
       obsidian
@@ -156,6 +165,8 @@
       keepassxc
       filen-desktop
       via
+      ungoogled-chromium
+      cisco-packet-tracer_9
       (llama-cpp.override { cudaSupport = true; })
     ];
   };
@@ -175,7 +186,8 @@
     package = (pkgs.wivrn.override { cudaSupport = true; });
     # You should use the default configuration (which is no configuration), as that works the best out of the box.
     # However, if you need to configure something see https://github.com/WiVRn/WiVRn/blob/master/docs/configuration.md for configuration options and https://mynixos.com/nixpkgs/option/services.wivrn.config.json for an example configuration.
-};
+  };
+
 
   #Install steam
   programs.steam = {
@@ -216,6 +228,10 @@
      android-tools
      testdisk
      tlp
+     prismlauncher
+     (prismlauncher.override {
+        additionalLibs = [ openxr-loader ];
+      })
   #KDE PACKAGES
      kdePackages.kate
      kdePackages.isoimagewriter
@@ -225,7 +241,7 @@
   #USEFULL APPS
      thunderbird
      libreoffice
-     peazip
+     #peazip
      lshw-gui
      mcontrolcenter
      filezilla
@@ -237,7 +253,11 @@
      qbittorrent
      networkmanager
      networkmanagerapplet
+     scrcpy
+     wireshark
   #DEPENDENCIES
+    wayvr
+    xrizer
     jre25_minimal
     python314
     python314Packages.pip
